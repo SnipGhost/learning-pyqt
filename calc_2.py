@@ -23,23 +23,23 @@ class MyMainWindow(QMainWindow):
         self.expression = ''  # Выражение, которое необходимо подсчитать
 
         self.title_label = QLabel('Калькулятор - 2', self)
-        self.title_label.setGeometry(10, 10, 110, 20)
+        self.title_label.setGeometry(10, 20, 110, 20)
 
         big_font = QFont("Arial", 18, QFont.Bold)
 
         self.expression_label = QLabel(self.expression, self)
         self.expression_label.setFont(big_font)
-        self.expression_label.setGeometry(10, 40, 130, 20)
+        self.expression_label.setGeometry(10, 50, 130, 20)
 
         self.result_label = QLabel('= ?', self)
         self.result_label.setFont(big_font)
-        self.result_label.setGeometry(130, 40, 100, 20)
+        self.result_label.setGeometry(130, 50, 100, 20)
 
         # Хранит в себе все сущности кнопок
         self.numpad = []
 
         # Вложенная функция для минимизации объемов кода
-        def create_btn(code, num, handler, start_x=20, start_y=70,
+        def create_btn(code, num, handler, start_x=20, start_y=80,
                        btn_size=20, btn_margin=10, x_count=3):
             btn = QPushButton(code, self)
             btn_space = btn_size + btn_margin
@@ -61,10 +61,10 @@ class MyMainWindow(QMainWindow):
 
         # Специальные кнопки
         for idx, sym in enumerate(['C', '=']):
-            create_btn(sym, idx, self.special_clicked, start_x=130, start_y=10)
+            create_btn(sym, idx, self.special_clicked, start_x=130, start_y=20)
 
         self.statusBar()
-        self.setGeometry(300, 300, 200, 220)
+        self.setGeometry(300, 300, 200, 230)
         self.setWindowTitle('Калькулятор')
         self.show()
 
