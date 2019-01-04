@@ -7,6 +7,7 @@
 
 import sys
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QApplication
+from PyQt5.QtGui import QFont
 
 
 class MyMainWindow(QMainWindow):
@@ -22,19 +23,23 @@ class MyMainWindow(QMainWindow):
         self.expression = ''  # Выражение, которое необходимо подсчитать
 
         self.title_label = QLabel('Калькулятор - 2', self)
-        self.title_label.setGeometry(10, 5, 110, 20)
+        self.title_label.setGeometry(10, 10, 110, 20)
+
+        big_font = QFont("Arial", 18, QFont.Bold)
 
         self.expression_label = QLabel(self.expression, self)
-        self.expression_label.setGeometry(10, 30, 130, 20)
+        self.expression_label.setFont(big_font)
+        self.expression_label.setGeometry(10, 40, 130, 20)
 
-        self.result_label = QLabel('= Результат', self)
-        self.result_label.setGeometry(130, 30, 100, 20)
+        self.result_label = QLabel('= ?', self)
+        self.result_label.setFont(big_font)
+        self.result_label.setGeometry(130, 40, 100, 20)
 
         # Хранит в себе все сущности кнопок
         self.numpad = []
 
         # Вложенная функция для минимизации объемов кода
-        def create_btn(code, num, handler, start_x=20, start_y=55,
+        def create_btn(code, num, handler, start_x=20, start_y=70,
                        btn_size=20, btn_margin=10, x_count=3):
             btn = QPushButton(code, self)
             btn_space = btn_size + btn_margin
@@ -48,17 +53,18 @@ class MyMainWindow(QMainWindow):
         for idx, sym in enumerate(list(range(1, 10)) + ['(', '0', ')']):
             if type(sym) != str:
                 sym = str(sym)
-            create_btn(sym, idx, self.buttonClicked)
+            create_btn(sym, idx, self.button_clicked)
 
         # Кнопки операций
         for idx, sym in enumerate(['+', '-', '*', '/', '|', '&', '^', '**']):
-            create_btn(sym, idx, self.buttonClicked, start_x=130, x_count=2)
+            create_btn(sym, idx, self.button_clicked, start_x=130, x_count=2)
 
+        # Специальные кнопки
         for idx, sym in enumerate(['C', '=']):
-            create_btn(sym, idx, self.buttonClicked, start_x=130, start_y=5)
+            create_btn(sym, idx, self.special_clicked, start_x=130, start_y=10)
 
         self.statusBar()
-        self.setGeometry(300, 300, 200, 200)
+        self.setGeometry(300, 300, 200, 220)
         self.setWindowTitle('Калькулятор')
         self.show()
 
@@ -73,19 +79,30 @@ class MyMainWindow(QMainWindow):
             new_result = 'Ошибка'
         self.result_label.setText(new_result)
 
-    def buttonClicked(self):
+    def special_clicked(self):
         '''
-            Обработчик события нажатия кнопки
+            Обработчик события нажатия специальной кнопки
+        '''
+        sender = self.sender()
+        if sender.text() == 'C':
+            msg = 'Нажат сброс'
+            self.expression = ''
+            self.expression_label.setText(self.expression)
+            self.result_label.setText('= ?')
+        elif sender.text() == '=':
+            msg = 'Подсчет результата ...'
+            self.calc(self.expression)
+        self.statusBar().showMessage(msg)
+
+    def button_clicked(self):
+        '''
+            Обработчик события нажатия обычной кнопки
         '''
         sender = self.sender()
         msg = sender.text() + ' нажато'
         self.statusBar().showMessage(msg)
-
-        if sender.text() == '=':
-            self.calc(self.expression)
-        else:
-            self.expression += '{}'.format(sender.text())
-            self.expression_label.setText(self.expression)
+        self.expression += '{}'.format(sender.text())
+        self.expression_label.setText(self.expression)
 
 
 # Если запускаем скрипт не как бибилотеку, то выполнится блок кода ниже:
